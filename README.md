@@ -1,3 +1,8 @@
+Inspired by:
+- https://gist.github.com/gutoandreollo/e12455886149a6c85a70
+- https://github.com/egara/arch-btrfs-installation
+- https://www.gloriouseggroll.tv/arch-linux-efi-install-guide/
+
 # Init
 Internet (tethering) :
 ```
