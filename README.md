@@ -4,7 +4,7 @@ Inspired by:
 - https://www.gloriouseggroll.tv/arch-linux-efi-install-guide/
 
 # Init
-Internet (tethering) :
+Internet (tethering phone via USB) :
 ```
 ls /sys/class/net
 dhcpcd interface
@@ -60,7 +60,7 @@ cd
 umount /mnt
 mount -o relatime,space_cache,compress=zstd,subvol=_active/rootvol /dev/sdaX /mnt
 mkdir /mnt/{home,tmp,boot}
-mount -o relatime,space_cache,compress=zstd,subvol=_active/tmp /dev/sdaX /mnt/home
+mount -o relatime,space_cache,compress=zstd,subvol=_active/home /dev/sdaX /mnt/home
 mount -o relatime,space_cache,compress=zstd,subvol=_active/tmp /dev/sdaX /mnt/tmp
 mount /dev/sdaX /mnt/boot
 ```
@@ -82,19 +82,20 @@ pacstrap -i /mnt base base-devel
 # Generate fstab
 ```
 genfstab -U -p /mnt >> /mnt/etc/fstab
-nano /mnt/etc/fstab
+nano /mnt/etc/fstab // verify that the drives are correctly mapped
 ```
 # chroot into system
 ```
 arch-chroot /mnt
-nano /etc/locale.gen //uncomment locales
+sudo pacman -S nano // if you don't want to use vim or vi
+nano /etc/locale.gen // uncomment locales refering to your language eg. en_US-UTF-8
 locale-gen
 echo LANG=en_US.UTF-8 > /etc/locale.conf
 export LANG=en_US.UTF-8
 ls /usr/share/zoneinfo/
 ln -s /usr/share/zoneinfo/your-time-zone > /etc/localtime //select your zone
 hwclock --systohc --utc
-echo balthazar > /etc/hostname
+echo PC_NAME > /etc/hostname
 nano /etc/pacman.conf
 ```
 uncomment multilib
@@ -106,7 +107,7 @@ useradd -m -g users -G wheel,storage,power -s /bin/bash someusername
 passwd someusername
 EDITOR=nano visudo
 ```
-uncomment and add
+uncomment and add, to make sudoers use root password
 ```
 %wheel ALL=(ALL) ALL
 Defaults rootpw
@@ -126,17 +127,17 @@ initrd  /intel-ucode.img
 initrd /initramfs-linux.img
 options root=LABEL=arch rw,nvidia-drm.modeset=1 rootflags=subvol=_active/rootvol
 ```
-get uuid or label
+get uuid, if you dont wanna use the label
 ```
 echo "options root=PARTUUID=$(blkid -s PARTUUID -o value /dev/sdb3) rw" >> /boot/loader/entries/arch.conf
 ```
 # Install apliances
 ```
 pacman -S intel-ucode
-sudo pacman -S networkmanager
-sudo systemctl enable NetworkManager.service
-sudo pacman -S linux mkinitcpio linux-headers btrfs-progs
-sudo pacman -S nvidia-dkms libglvnd nvidia-utils opencl-nvidia lib32-libglvnd lib32-nvidia-utils lib32-opencl-nvidia nvidia-settings
+pacman -S networkmanager
+systemctl enable NetworkManager
+pacman -S linux mkinitcpio linux-headers btrfs-progs
+pacman -S nvidia-dkms libglvnd nvidia-utils opencl-nvidia lib32-libglvnd lib32-nvidia-utils lib32-opencl-nvidia nvidia-settings
 sudo nano /etc/mkinitcpio.conf
 ```
 Change in modules
@@ -152,7 +153,8 @@ mkinitcpio -p linux
 ```
 Create pacman nvidia HOOK
 ```
-sudo nano /etc/pacman.d/hooks/nvidia.hook
+mkdir /etc/pacman.d/hooks
+nano /etc/pacman.d/hooks/nvidia.hook
 
 [Trigger]
 Operation=Install
@@ -166,3 +168,12 @@ Depends=mkinitcpio
 When=PostTransaction
 Exec=/usr/bin/mkinitcpio -P
 ```
+# Reboot into the system
+```
+exit
+umount -a
+reboot
+```
+See if the system boots correctly from your drive.
+# Install the DE
+It's done.
