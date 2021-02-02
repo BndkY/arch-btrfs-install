@@ -43,6 +43,8 @@ Size in sectors: Leave this blank ->press Enter
 Hex Code: Leave this blank ->press Enter
 Enter new partition name: root ->press Enter
 ```
+Arrow over to [Write] to save your new partitions, hit enter, type “yes”, hit enter again.
+Lastly, Arrow over to [Quit] and press enter.
 reboot
 # Creating partitions
 ```
@@ -55,6 +57,7 @@ cd /mnt
 btrfs subvolume create _active
 btrfs subvolume create _active/rootvol
 btrfs subvolume create _active/tmp
+btrfs subvolume create _active/home
 btrfs subvolume create _snapshots
 cd
 umount /mnt
