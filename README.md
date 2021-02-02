@@ -141,6 +141,7 @@ pacman -S networkmanager
 systemctl enable NetworkManager
 pacman -S linux mkinitcpio linux-headers btrfs-progs
 pacman -S nvidia-dkms libglvnd nvidia-utils opencl-nvidia lib32-libglvnd lib32-nvidia-utils lib32-opencl-nvidia nvidia-settings
+pacman -S mesa lib32-mesa xf86-video-intel vulkan-intel #if intel graphics
 sudo nano /etc/mkinitcpio.conf
 ```
 Change in modules
